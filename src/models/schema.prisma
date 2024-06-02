@@ -1,0 +1,99 @@
+datasource db {
+  provider = "postgresql" // ou "mysql" ou outro provedor que você estiver usando
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Teacher {
+  id             String           @unique @default(uuid())
+  name           String
+  email          String           @unique
+  document       String
+  role           String
+  students       TeacherStudent[]
+  trainingSheets TrainingSheet[]
+}
+
+model Student {
+  id             String              @unique @default(uuid())
+  name           String
+  email          String              @unique
+  document       String
+  teachers       TeacherStudent[]
+  trainingSheets TrainingSheet[]
+  statistics     StudentStatistics[]
+}
+
+model TeacherStudent {
+  teacherId String
+  studentId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id])
+
+  @@id([teacherId, studentId])
+}
+
+model CategoryExercice {
+  id            String             @unique @default(uuid())
+  name          String
+  subCategoryId String?
+  subCategory   CategoryExercice?  @relation("SubCategory", fields: [subCategoryId], references: [id])
+  exercises     Exercice[]
+  subCategories CategoryExercice[] @relation("SubCategory")
+}
+
+model ExerciceTechnique {
+  id         String              @unique @default(uuid())
+  name       String
+  statistics StudentStatistics[]
+}
+
+model Exercice {
+  id                    String                  @unique @default(uuid())
+  name                  String
+  categoryId            String
+  statistics            StudentStatistics[]
+  TrainingSheetExercice TrainingSheetExercice[]
+  category              CategoryExercice        @relation(fields: [categoryId], references: [id])
+}
+
+model TrainingSheet {
+  id        String                  @unique @default(uuid())
+  name      String
+  teacherId String
+  studentId String
+  exercises TrainingSheetExercice[]
+  teacher   Teacher                 @relation(fields: [teacherId], references: [id])
+  student   Student                 @relation(fields: [studentId], references: [id])
+}
+
+model TrainingSheetExercice {
+  id              String        @unique @default(uuid())
+  repetitions     Int
+  series          Int
+  restTime        Int
+  description     String
+  observation     String
+  trainingSheetId String
+  exerciceId      String
+  trainingSheet   TrainingSheet @relation(fields: [trainingSheetId], references: [id])
+  exercice        Exercice      @relation(fields: [exerciceId], references: [id])
+}
+
+model StudentStatistics {
+  id          String            @unique @default(uuid())
+  repetitions Int
+  series      Int
+  weight      Float
+  createdAt   DateTime          @default(now())
+  observation String
+  studentId   String
+  exerciceId  String
+  techniqueId String
+  student     Student           @relation(fields: [studentId], references: [id])
+  exercice    Exercice          @relation(fields: [exerciceId], references: [id])
+  technique   ExerciceTechnique @relation(fields: [techniqueId], references: [id])
+}

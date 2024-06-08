@@ -1,12 +1,4 @@
-type TeacherModel = {
-  id: number
-  name: string
-  email: string
-  document: string
-  role: string
-}
-
-type StudentModel = {
+type UserModel = {
   id: number
   name: string
   email: string
@@ -14,54 +6,54 @@ type StudentModel = {
 }
 
 type TeacherStudentModel = {
-  teacher: TeacherModel
-  studentId: StudentModel
+  teacher: UserModel
+  student: UserModel
 }
 
-type CategoryExerciceModel = {
+type ExerciseCategoryModel = {
   id: number
   name: string
-  subCategory?: CategoryExerciceModel
+  subCategory?: ExerciseCategoryModel
 }
 
-type ExerciceTechniqueModel = {
+type ExerciseTechniqueModel = {
   id: number
   name: string
 }
 
-type ExerciceModel = {
+type ExerciseModel = {
   id: number
   name: string
-  category: CategoryExerciceModel
+  category: ExerciseCategoryModel
 }
 
-type TrainingSheetModel = {
+type WorkoutSheetModel = {
   id: number
   name: string
-  teacher: TeacherModel
-  student: StudentModel
+  user: UserModel
+  teacher?: UserModel
 }
 
-type TrainingSheetExerciceModel = {
+type WorkoutSheetExerciseModel = {
   id: number
-  trainingSheetId: number
-  exerciceId: number
   repetitions: number
   series: number
-  techniques: ExerciceTechniqueModel[]
   restTime: number
   description: string
   observation: string
+  exercise: ExerciseModel
+  techniques: ExerciseTechniqueModel[]
+  workoutSheet: WorkoutSheetModel
 }
 
 type StudentStatisticsModel = {
   id: number
-  student: StudentModel
-  exercice: ExerciceModel
-  technique: ExerciceTechniqueModel
   repetitions: number
   series: number
   weight: number
   createdAt: Date
   observation: string
+  student: UserModel
+  exercise: ExerciseModel
+  technique: ExerciseTechniqueModel
 }
